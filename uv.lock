@@ -293,10 +293,14 @@ version = "0.1.0"
 source = { virtual = "." }
 dependencies = [
     { name = "hopsworks" },
+    { name = "pandas" },
 ]
 
 [package.metadata]
-requires-dist = [{ name = "hopsworks", specifier = ">=4.2.0" }]
+requires-dist = [
+    { name = "hopsworks", specifier = ">=4.2.0" },
+    { name = "pandas", specifier = ">=2.1.4" },
+]
 
 [[package]]
 name = "idna"
