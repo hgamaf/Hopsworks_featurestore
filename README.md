@@ -1,58 +1,122 @@
 # Hopsworks Feature Store
 
-Projeto para implementação de Feature Store utilizando o Hopsworks.
+Este projeto implementa um Feature Store utilizando o Hopsworks para armazenar e gerenciar features de clientes para previsão de churn.
 
-## 🛠️ Tecnologias
+## 🛠️ Tecnologias Utilizadas
 
-[![Python](https://img.shields.io/badge/Python-3.12-blue.svg)](https://www.python.org/downloads/release/python-3120/)
-[![Hopsworks](https://img.shields.io/badge/Hopsworks-4.2.0-orange.svg)](https://www.hopsworks.ai/)
-[![Pandas](https://img.shields.io/badge/Pandas-2.1.4-green.svg)](https://pandas.pydata.org/)
-[![PyArrow](https://img.shields.io/badge/PyArrow-19.0.1-red.svg)](https://arrow.apache.org/docs/python/)
-[![Python-dotenv](https://img.shields.io/badge/python--dotenv-1.1.0-yellow.svg)](https://pypi.org/project/python-dotenv/)
+![Python](https://img.shields.io/badge/python-3670A0?style=for-the-badge&logo=python&logoColor=ffdd54)
+![Hopsworks](https://img.shields.io/badge/Hopsworks-00A98F?style=for-the-badge&logo=hopsworks&logoColor=white)
+![Pandas](https://img.shields.io/badge/pandas-%23150458.svg?style=for-the-badge&logo=pandas&logoColor=white)
+![PyArrow](https://img.shields.io/badge/PyArrow-FF4B4B?style=for-the-badge&logo=apachearrow&logoColor=white)
+![Python-dotenv](https://img.shields.io/badge/python--dotenv-000000?style=for-the-badge&logo=python&logoColor=white)
 
-## 📁 Estrutura do Projeto
+## 📋 Pré-requisitos
+
+- Python 3.11.0
+- pip
+- Conta no Hopsworks
+- API Key do Hopsworks
+
+## 🔧 Instalação
+
+1. Clone o repositório:
+```bash
+git clone https://github.com/seu-usuario/hopsworks_featurestore.git
+cd hopsworks_featurestore
+```
+
+2. Crie um ambiente virtual:
+```bash
+python -m venv .venv
+source .venv/bin/activate  # No Windows: .venv\Scripts\activate
+```
+
+3. Instale as dependências:
+```bash
+pip install -r requirements.txt
+pip install -U 'hopsworks[python]' --quiet
+```
+
+4. Configure as variáveis de ambiente:
+```bash
+cp .env.example .env
+```
+Edite o arquivo `.env` com suas credenciais do Hopsworks.
+
+## 📊 Estrutura do Projeto
 
 ```
 Hopsworks_featurestore/
-├── data/                    # Dados do projeto
+├── data/
 │   ├── processed_customer_info.csv
-│   └── scripts/            # Scripts de processamento de dados
-├── feature_store/          # Configuração do Feature Store
-│   ├── feature_groups/     # Feature Groups
-│   │   └── customer_info.py
-│   └── init_hopsworks.py   # Inicialização do Hopsworks
-├── features/               # Features do projeto
-│   └── feature_engineering.py
-├── .env                    # Variáveis de ambiente
-├── .gitignore             # Arquivos ignorados pelo Git
-├── pyproject.toml         # Dependências do projeto
-└── README.md              # Documentação
+│   └── processed_customer_demography.csv
+├── featurestore/
+│   ├── __init__.py
+│   ├── init_hopsworks.py
+│   ├── customer_info.py
+│   └── customer_demography_info.py
+├── .env
+├── .gitignore
+├── README.md
+└── requirements.txt
 ```
+
+## 🔄 Fluxo da Solução
+
+```mermaid
+graph TD
+    A[init_hopsworks.py] -->|Inicializa conexão| B[customer_info.py]
+    A -->|Inicializa conexão| C[customer_demography_info.py]
+    D[processed_customer_info.csv] -->|Carrega dados| B
+    E[processed_customer_demography.csv] -->|Carrega dados| C
+    B -->|Cria Feature Group| F[Feature Store]
+    C -->|Cria Feature Group| F
+```
+
+## 📝 Descrição dos Scripts
+
+### init_hopsworks.py
+- Responsável por inicializar a conexão com o Hopsworks
+- Carrega as variáveis de ambiente do arquivo .env
+- Autentica com a API Key do Hopsworks
+- Retorna o objeto do Feature Store
+
+### customer_info.py
+- Cria o feature group para informações básicas do cliente
+- Inclui features como:
+  - customerID (chave primária)
+  - contract
+  - tenure
+  - paymentmethod
+  - paperlessbilling
+  - monthlycharges
+  - totalcharges
+  - churn
+  - datetime
+
+### customer_demography_info.py
+- Cria o feature group para informações demográficas do cliente
+- Inclui features como:
+  - customerID (chave primária)
+  - gender
+  - seniorcitizen
+  - dependents
+  - partner
 
 ## 🚀 Como Usar
 
-1. Instale as dependências:
+1. Execute o script de inicialização:
 ```bash
-# Instalar o Hopsworks com todas as dependências necessárias
-pip install -U 'hopsworks[python]' --quiet
-
-# Instalar outras dependências do projeto
-pip install -e .
+python featurestore/init_hopsworks.py
 ```
 
-2. Configure as variáveis de ambiente no arquivo `.env`:
-```env
-HOPSWORKS_API_KEY=sua_api_key_aqui
-```
-
-3. Execute os scripts na ordem:
+2. Crie os feature groups:
 ```bash
-# Processar dados
-python features/feature_engineering.py
-
-# Inicializar Feature Store
-python feature_store/init_hopsworks.py
-
-# Criar Feature Groups
-python feature_store/feature_groups/customer_info.py
+python featurestore/customer_info.py
+python featurestore/customer_demography_info.py
 ```
+
+## 📚 Referências
+
+- [Documentação do Hopsworks](https://docs.hopsworks.ai/)
+- [Documentação do Python Feature Store](https://docs.hopsworks.ai/3.0/user_guides/fs/feature_group/python/)
