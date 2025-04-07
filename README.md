@@ -9,6 +9,8 @@ Este projeto implementa um Feature Store utilizando o Hopsworks para armazenar e
 ![Pandas](https://img.shields.io/badge/pandas-%23150458.svg?style=for-the-badge&logo=pandas&logoColor=white)
 ![PyArrow](https://img.shields.io/badge/PyArrow-FF4B4B?style=for-the-badge&logo=apachearrow&logoColor=white)
 ![Python-dotenv](https://img.shields.io/badge/python--dotenv-000000?style=for-the-badge&logo=python&logoColor=white)
+![XGBoost](https://img.shields.io/badge/XGBoost-FF6B00?style=for-the-badge&logo=xgboost&logoColor=white)
+![MLflow](https://img.shields.io/badge/MLflow-0194E2?style=for-the-badge&logo=mlflow&logoColor=white)
 
 ## 📋 Pré-requisitos
 
@@ -57,6 +59,10 @@ Hopsworks_featurestore/
 │   ├── customer_info.py
 │   ├── customer_demography_info.py
 │   └── customer_subscription_info.py
+├── featureview/
+│   └── churn_feature_view.py
+├── model/
+│   └── training_pipeline.py
 ├── .env
 ├── .gitignore
 ├── README.md
@@ -78,6 +84,10 @@ graph TB
     A -->|Inicializa conexão| G[customer_subscription_info.py]
     G -->|Carrega dados| H[processed_customer_subscription.csv]
     H -->|Cria Feature Group| D
+    
+    D -->|Combina Feature Groups| I[churn_feature_view.py]
+    I -->|Cria Feature View| J[Feature View]
+    J -->|Treina Modelo| K[training_pipeline.py]
 ```
 
 ## 📝 Descrição dos Scripts
@@ -125,6 +135,19 @@ graph TB
   - streamingtv
   - datetime
 
+### churn_feature_view.py
+- Combina os três feature groups em uma única feature view
+- Aplica transformações nas features:
+  - Normalização (min-max) para features numéricas
+  - Label encoding para features categóricas
+- Define a variável target (churn)
+
+### training_pipeline.py
+- Utiliza a feature view para treinar o modelo
+- Implementa o pipeline de treinamento com MLflow
+- Registra métricas e artefatos
+- Versiona o modelo
+
 ## 🚀 Como Usar
 
 1. Execute o script de inicialização:
@@ -139,7 +162,18 @@ python featurestore/customer_demography_info.py
 python featurestore/customer_subscription_info.py
 ```
 
+3. Crie a feature view:
+```bash
+python featureview/churn_feature_view.py
+```
+
+4. Treine o modelo:
+```bash
+python model/training_pipeline.py
+```
+
 ## 📚 Referências
 
 - [Documentação do Hopsworks](https://docs.hopsworks.ai/)
 - [Documentação do Python Feature Store](https://docs.hopsworks.ai/3.0/user_guides/fs/feature_group/python/)
+- [Documentação do MLflow](https://mlflow.org/docs/latest/index.html)
