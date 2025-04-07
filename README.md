@@ -64,13 +64,14 @@ Hopsworks_featurestore/
 ## 🔄 Fluxo da Solução
 
 ```mermaid
-graph TD
+graph TB
     A[init_hopsworks.py] -->|Inicializa conexão| B[customer_info.py]
-    A -->|Inicializa conexão| C[customer_demography_info.py]
-    D[processed_customer_info.csv] -->|Carrega dados| B
-    E[processed_customer_demography.csv] -->|Carrega dados| C
-    B -->|Cria Feature Group| F[Feature Store]
-    C -->|Cria Feature Group| F
+    B -->|Carrega dados| C[processed_customer_info.csv]
+    C -->|Cria Feature Group| D[Feature Store]
+    
+    A -->|Inicializa conexão| E[customer_demography_info.py]
+    E -->|Carrega dados| F[processed_customer_demography.csv]
+    F -->|Cria Feature Group| D
 ```
 
 ## 📝 Descrição dos Scripts
