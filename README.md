@@ -49,12 +49,14 @@ Edite o arquivo `.env` com suas credenciais do Hopsworks.
 Hopsworks_featurestore/
 ├── data/
 │   ├── processed_customer_info.csv
-│   └── processed_customer_demography.csv
+│   ├── processed_customer_demography.csv
+│   └── processed_customer_subscription.csv
 ├── featurestore/
 │   ├── __init__.py
 │   ├── init_hopsworks.py
 │   ├── customer_info.py
-│   └── customer_demography_info.py
+│   ├── customer_demography_info.py
+│   └── customer_subscription_info.py
 ├── .env
 ├── .gitignore
 ├── README.md
@@ -72,6 +74,10 @@ graph TB
     A -->|Inicializa conexão| E[customer_demography_info.py]
     E -->|Carrega dados| F[processed_customer_demography.csv]
     F -->|Cria Feature Group| D
+    
+    A -->|Inicializa conexão| G[customer_subscription_info.py]
+    G -->|Carrega dados| H[processed_customer_subscription.csv]
+    H -->|Cria Feature Group| D
 ```
 
 ## 📝 Descrição dos Scripts
@@ -104,6 +110,21 @@ graph TB
   - dependents
   - partner
 
+### customer_subscription_info.py
+- Cria o feature group para informações de assinatura do cliente
+- Inclui features como:
+  - customerID (chave primária)
+  - deviceprotection
+  - onlinebackup
+  - onlinesecurity
+  - internetservice
+  - multiplelines
+  - phoneservice
+  - techsupport
+  - streamingmovies
+  - streamingtv
+  - datetime
+
 ## 🚀 Como Usar
 
 1. Execute o script de inicialização:
@@ -115,6 +136,7 @@ python featurestore/init_hopsworks.py
 ```bash
 python featurestore/customer_info.py
 python featurestore/customer_demography_info.py
+python featurestore/customer_subscription_info.py
 ```
 
 ## 📚 Referências
