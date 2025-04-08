@@ -63,6 +63,8 @@ Hopsworks_featurestore/
 │   └── churn_feature_view.py
 ├── model/
 │   └── training_pipeline.py
+├── eda/
+│   └── churn_eda.py
 ├── .env
 ├── .gitignore
 ├── README.md
@@ -87,7 +89,9 @@ graph TB
     
     D -->|Combina Feature Groups| I[churn_feature_view.py]
     I -->|Cria Feature View| J[Feature View]
-    J -->|Treina Modelo| K[training_pipeline.py]
+    J -->|Análise Exploratória| K[churn_eda.py]
+    K -->|Gera Insights| L[Relatório EDA]
+    L -->|Treina Modelo| M[training_pipeline.py]
 ```
 
 ## 📝 Descrição dos Scripts
@@ -148,6 +152,12 @@ graph TB
 - Registra métricas e artefatos
 - Versiona o modelo
 
+### churn_eda.py
+- Realiza análise exploratória dos dados da feature view de churn
+- Mostra informações gerais sobre o dataset
+- Mostra detalhes sobre valores nulos e estatísticas descritivas
+- Mostra distribuição de variáveis categóricas
+
 ## 🚀 Como Usar
 
 1. Execute o script de inicialização:
@@ -167,7 +177,12 @@ python featurestore/customer_subscription_info.py
 python featureview/churn_feature_view.py
 ```
 
-4. Treine o modelo:
+4. Realize análise exploratória dos dados:
+```bash
+python eda/churn_eda.py
+```
+
+5. Treine o modelo:
 ```bash
 python model/training_pipeline.py
 ```

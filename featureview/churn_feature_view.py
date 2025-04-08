@@ -3,10 +3,12 @@ import sys
 import os
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 from featurestore.init_hopsworks import fs_global
-from hopsworks.hsfs.builtin_transformations import label_encoder, min_max_scaler
+from hopsworks.hsfs.builtin_transformations import min_max_scaler
+from hsfs.transformation_function import TransformationFunction
 
 import warnings
 import logging
+import pandas as pd
 
 # Configuração do logging
 logging.basicConfig(
@@ -19,6 +21,15 @@ logging.basicConfig(
 
 logger = logging.getLogger(__name__)
 warnings.filterwarnings('ignore')
+
+def custom_label_encoder(value):
+    """
+    Função personalizada para label encoding que lida com valores nulos.
+    Retorna -1 para valores nulos.
+    """
+    if value is None or pd.isna(value):
+        return -1
+    return value
 
 try:
     logger.info("Obtendo Feature Store...")
@@ -52,7 +63,6 @@ try:
         .join(subscriptions_fg.select_all(include_event_time=False))
     logger.info("Features selecionadas com sucesso")
 
-
     # Define lists of numerical and categorical features
     numerical_features = ["tenure", "monthlycharges", "totalcharges"]
     categorical_features = [
@@ -74,10 +84,16 @@ try:
         transformation_functions.append(min_max_scaler(feature))
         logger.debug(f"Transformação min_max_scaler aplicada para {feature}")
 
-    # For categorical features, use the label_encoder transformation
+    # For categorical features, use our custom label encoder
     logger.info("Aplicando transformação label_encoder para features categóricas...")
     for feature in categorical_features:
-        transformation_functions.append(label_encoder(feature))
+        # Cria uma função de transformação personalizada
+        tf = TransformationFunction(
+            name=f"custom_label_encoder_{feature}",
+            transformation_fn=custom_label_encoder,
+            output_type="int",
+        )
+        transformation_functions.append(tf)
         logger.debug(f"Transformação label_encoder aplicada para {feature}")
 
     # Get or create the 'churn_feature_view'
